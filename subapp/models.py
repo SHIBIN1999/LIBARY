@@ -5,3 +5,4 @@ class student(models.Model):
     title=models.CharField(max_length=12)
     summary=models.TextField()
     year=models.IntegerField()
+
