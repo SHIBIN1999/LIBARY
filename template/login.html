@@ -18,7 +18,7 @@
         }
 
         .container {
-            background: white;
+            background: linear-gradient(rgba(238, 231, 231, 0.4));
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -84,12 +84,13 @@
         }
 
         .footer a {
-            color: #4f46e5;
+            color: #e7e7f4;
             text-decoration: none;
         }
 
         .footer a:hover {
             text-decoration: underline;
+            color: rgb(19, 227, 43);
         }
     </style>
 </head>
@@ -107,8 +108,8 @@
 
         <form method="POST">
             {% csrf_token %}
-            <label>Username</label>
-            <input type="text" name="username" placeholder="Enter username" required>
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Enter email" required>
 
             <label>Password</label>
             <input type="password" name="password" placeholder="Enter password" required>
@@ -117,8 +118,33 @@
         </form>
 
         <div class="footer">
-            <p>Don’t have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+            <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
         </div>
     </div>
+
+    <script>
+        // Prevent back button navigation to protected pages after logout
+        (function() {
+            // Check if user just logged out (from message)
+            const hasLogoutMessage = document.querySelector('.messages .success');
+            
+            if (hasLogoutMessage) {
+                // Replace current history state
+                history.pushState(null, null, location.href);
+                
+                // Prevent back button
+                window.onpopstate = function() {
+                    history.pushState(null, null, location.href);
+                };
+            }
+            
+            // Also prevent caching on page load
+            window.onpageshow = function(event) {
+                if (event.persisted) {
+                    window.location.reload();
+                }
+            };
+        })();
+    </script>
 </body>
 </html>

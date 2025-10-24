@@ -14,7 +14,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">MyApp</a>
+        <a class="navbar-brand fw-bold" href="#">Library</a>
 
         <div class="d-flex align-items-center ms-auto">
             {% if request.session.username %}
@@ -23,7 +23,7 @@
                 </span>
                 <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm rounded-pill">Logout</a>
             {% else %}
-                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm rounded-pill">Login</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm rounded-pill">Logout</a>
             {% endif %}
         </div>
     </div>
@@ -34,7 +34,7 @@
     <div class="card shadow-lg rounded-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="mb-0">Items List</h3>
+                <h3 class="mb-0">Book List</h3>
                 <a href="{% url 'create' %}" class="btn btn-primary rounded-pill">+ New Item</a>
             </div>
 
@@ -42,7 +42,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Title</th>
-                        <th>Summary</th>
+                        <th>author</th>
                         <th>Year</th>
                         <th>Actions</th>
                     </tr>
@@ -51,7 +51,7 @@
                     {% for k in s %}
                     <tr>
                         <td>{{ k.title }}</td>
-                        <td>{{ k.summary }}</td>
+                        <td>{{ k.author }}</td>
                         <td>{{ k.year }}</td>
                         <td>
                             <a href="{% url 'edit' k.id %}" class="btn btn-sm btn-warning me-2">Edit</a>

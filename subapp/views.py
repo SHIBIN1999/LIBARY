@@ -6,11 +6,15 @@ from django.shortcuts import redirect
 def create(request):
     if request.method == "POST":
         t = request.POST.get('title')
-        s = request.POST.get('summary')
+        s = request.POST.get('author')
         y = request.POST.get('year')
 
+        # Validation (optional but recommended)
+        if not t or not s or not y:
+            return render(request, 'create.html', {'error': 'All fields are required!'})
+
         # Save new record
-        student.objects.create(title=t, summary=s, year=y)
+        student.objects.create(title=t, author=s, year=y)
 
         # Redirect to list page after saving
         return redirect('list')
@@ -35,7 +39,7 @@ def edit(request, pk):
 
     if request.method == "POST":
         e.title = request.POST.get('title')
-        e.summary = request.POST.get('summary')
+        e.author = request.POST.get('author')
         e.year = request.POST.get('year')
         e.save()
 
@@ -49,5 +53,4 @@ def edit(request, pk):
 def delete(request,pk):
     d=student.objects.get(pk=pk)
     d.delete()
-    s=student.objects.all()
     return redirect('list')

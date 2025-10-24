@@ -1,12 +1,11 @@
 
 from django.urls import path
-from . import views
-
+from .views import list,create,view,delete,edit
 
 urlpatterns = [
-    path('',views.create,name='create'),
-    path('view/',views.view,name='view'),
-    path('list/',views.list,name='list'),
-    path('edit/<pk>',views.edit,name='edit'),
-    path('delete/<pk>',views.delete,name='delete')
+    path('',create,name='create'),
+    path('view/',view,name='view'),
+    path('list/',list,name='list'),
+    path('edit/<pk>',edit,name='edit'),
+    path('delete/<pk>',delete,name='delete')
 ]
