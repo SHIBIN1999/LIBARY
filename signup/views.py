@@ -38,8 +38,12 @@ def login_view(request):
 
         try:
             user = UserAccount.objects.get(email=email, password=password)
-            messages.success(request, f'Welcome back, {user.name}!')
-            return redirect('list') 
+            if user.is_Admin:
+                messages.success(request, f'Welcome back, {user.name}!')
+                return redirect('list') 
+            else:
+                messages.success(request, f'Welcome back, {user.name}!')
+                return render(request,'home.html')
         except UserAccount.DoesNotExist:
             messages.error(request, 'Invalid email or password.')
             return redirect('login')

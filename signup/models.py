@@ -6,9 +6,15 @@ class UserAccount(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     is_Admin=models.BooleanField(default=False)
+    phone_number=models.IntegerField(max_length=100,null=True)
 
 
 
     def __str__(self):
         return self.name
+    
+
+    # models.py
+
+
     

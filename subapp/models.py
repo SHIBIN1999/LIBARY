@@ -6,3 +6,4 @@ class student(models.Model):
     author=models.TextField()
     year=models.IntegerField()
 
+

@@ -5,16 +5,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library - Manage Books</title>
+    <title>Library - Book List</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
         :root {
             --primary-color: #4a90e2;
-            --warning-color: #ffc107;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
             --danger-color: #dc3545;
             --dark-bg: #2c3e50;
+            --light-bg: #f8f9fa;
         }
 
         body {
@@ -90,6 +92,40 @@
             border-color: #e9ecef;
         }
 
+        .btn-book {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
+            color: white;
+        }
+
+        .btn-unbook {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-unbook:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(245, 87, 108, 0.5);
+            color: white;
+        }
+
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -104,41 +140,29 @@
             box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
         }
 
-        .btn-warning {
-            background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%);
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 0.5rem 1.2rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 8px rgba(247, 183, 51, 0.3);
-        }
-
-        .btn-warning:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(247, 183, 51, 0.5);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border: none;
-            font-weight: 600;
-            padding: 0.5rem 1.2rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 8px rgba(245, 87, 108, 0.3);
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(245, 87, 108, 0.5);
-        }
-
         .btn-outline-light:hover {
             background-color: white;
             color: var(--dark-bg);
+        }
+
+        .date-badge {
+            display: inline-block;
+            padding: 0.35rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #2c3e50;
+        }
+
+        .status-booked {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-available {
+            color: #6c757d;
+            font-weight: 600;
         }
 
         .page-title {
@@ -160,17 +184,6 @@
             opacity: 0.3;
             margin-bottom: 1rem;
         }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-
-        .book-title {
-            font-weight: 600;
-            color: #2c3e50;
-        }
     </style>
 </head>
 <body>
@@ -178,11 +191,11 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">📚 Library Admin</a>
+        <a class="navbar-brand fw-bold" href="#">📚 Library</a>
 
         <div class="d-flex align-items-center ms-auto">
-            <a href="{% url 'books' %}" class="btn btn-outline-light btn-sm rounded-pill me-3">
-                📖 View Books
+            <a href="{% url 'list' %}" class="btn btn-outline-light btn-sm rounded-pill me-3">
+                ⚙️ Manage Books
             </a>
             {% if request.session.username %}
                 <span class="text-white me-3">
@@ -200,42 +213,63 @@
 <div class="container mt-5">
     <div class="card shadow-lg">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="mb-0 page-title">📖 Manage Books</h3>
-                <a href="{% url 'create' %}" class="btn btn-primary rounded-pill">+ New Item</a>
+            <div class="mb-4">
+                <h3 class="mb-0 page-title">📖 Book Collection</h3>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle text-center">
+                <table class="table table-hover align-middle">
                     <thead>
                         <tr>
                             <th>Title</th>
                             <th>Author</th>
                             <th>Year</th>
-                            <th>Actions</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for k in s %}
                         <tr>
-                            <td class="book-title">{{ k.title }}</td>
+                            <td><strong>{{ k.title }}</strong></td>
                             <td>{{ k.author }}</td>
                             <td>{{ k.year }}</td>
                             <td>
-                                <div class="action-buttons">
-                                    <a href="{% url 'edit' k.id %}" class="btn btn-sm btn-warning">
-                                        ✏️ Edit
-                                    </a>
-                                    <a href="{% url 'delete' k.id %}" class="btn btn-sm btn-danger" 
-                                       onclick="return confirm('Are you sure you want to delete this book?')">
-                                        🗑️ Delete
-                                    </a>
-                                </div>
+                                {% if k.starting_date %}
+                                    <span class="date-badge">{{ k.starting_date }}</span>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if k.ending_date %}
+                                    <span class="date-badge">{{ k.ending_date }}</span>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if k.is_booked %}
+                                    <form method="POST" action="{% url 'unbook' k.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-unbook btn-sm">
+                                            ✓ Unbook
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="POST" action="{% url 'book' k.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-book btn-sm">
+                                            📅 Book Now
+                                        </button>
+                                    </form>
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="empty-state">
+                            <td colspan="6" class="empty-state">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                 </svg>
