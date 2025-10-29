@@ -3,6 +3,8 @@ from django.contrib import messages
 from .models import UserAccount  
 from django.shortcuts import get_object_or_404
 from subapp.models import student
+from django.utils import timezone
+from datetime import timedelta
 
 def signup(request):
     if request.method == 'POST':
@@ -70,7 +72,7 @@ def login_view(request):
     return render(request, 'login.html')
 
 
-def books_view(request):  # Remove pk parameter
+def books_view(request):
     # Get user from session
     user_id = request.session.get('user_id')
     if not user_id:
@@ -80,20 +82,38 @@ def books_view(request):  # Remove pk parameter
         # Handle booking here
         book_id = request.POST.get('book_id')
         if book_id:
-            book = student.objects.get(id=book_id)
-            book.is_booked = True
-            book.save()
-            messages.success(request, f'Successfully booked "{book.title}"!')
+            try:
+                book = student.objects.get(id=book_id)
+                user = UserAccount.objects.get(id=user_id)  # Get the user object
+                current_date = timezone.now().date() 
+                book.user = user  # Assign the user to the book
+                book.starting_date = current_date
+                book.ending_date = current_date + timedelta(days=30)
+                book.is_booked = True
+                book.save()
+                messages.success(request, f'Successfully booked "{book.title}"!')
+            except student.DoesNotExist:
+                messages.error(request, 'Book not found!')
+            except UserAccount.DoesNotExist:
+                messages.error(request, 'User not found!')
     
     s = student.objects.all()
     return render(request, 'books.html', {'s': s})
+
+
 
 def unbook_view(request):
     if request.method == 'POST':
         book_id = request.POST.get('book_id')
         if book_id:
-            book = student.objects.get(id=book_id)
-            book.is_booked = False  # Set to False
-            book.save()
-            messages.success(request, f'Successfully unbooked "{book.title}"!')
+            try:
+                book = student.objects.get(id=book_id)
+                book.user = None  # Clear the user assignment
+                book.is_booked = False
+                book.starting_date = None  # Clear the dates
+                book.ending_date = None
+                book.save()
+                messages.success(request, f'Successfully unbooked "{book.title}"!')
+            except student.DoesNotExist:
+                messages.error(request, 'Book not found!')
     return redirect('books')

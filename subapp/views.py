@@ -54,5 +54,8 @@ def delete(request,pk):
     d=student.objects.get(pk=pk)
     d.delete()
     return redirect('list')
+
+
 def bookeduser(request):
-    return render(request,'bookeduser.html')
+    data=student.objects.filter(is_booked=True)
+    return render(request,'bookeduser.html',{'data':data})
