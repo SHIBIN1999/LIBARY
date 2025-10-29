@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import UserAccount  # Import your model
+from .models import UserAccount  
+from django.shortcuts import get_object_or_404
+from subapp.models import student
 
 def signup(request):
     if request.method == 'POST':
@@ -31,27 +33,6 @@ def signup(request):
     return render(request, 'signup.html')
 
 
-def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')  # using same field name from form
-        password = request.POST.get('password')
-
-        try:
-            user = UserAccount.objects.get(email=email, password=password)
-            if user.is_Admin:
-                messages.success(request, f'Welcome back, {user.name}!')
-                return redirect('list') 
-            else:
-                messages.success(request, f'Welcome back, {user.name}!')
-                return render(request,'home.html')
-        except UserAccount.DoesNotExist:
-            messages.error(request, 'Invalid email or password.')
-            return redirect('login')
-
-    return render(request, 'login.html')
-
-
-
 def logout_view(request):
     # Clear all session data
     request.session.flush()
@@ -63,3 +44,56 @@ def logout_view(request):
     response = redirect('login')
     
     return response
+
+
+def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        try:
+            user = UserAccount.objects.get(email=email, password=password)
+            # Store user info in session
+            request.session['user_id'] = user.id  # ADD THIS
+            request.session['username'] = user.name  # ADD THIS
+            
+            if user.is_Admin:
+                messages.success(request, f'Welcome back, {user.name}!')
+                return redirect('list') 
+            else:
+                messages.success(request, f'Welcome back, {user.name}!')
+                return redirect('books')  # No pk needed anymore
+        except UserAccount.DoesNotExist:
+            messages.error(request, 'Invalid email or password.')
+            return redirect('login')
+
+    return render(request, 'login.html')
+
+
+def books_view(request):  # Remove pk parameter
+    # Get user from session
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return redirect('login')
+    
+    if request.method == 'POST':
+        # Handle booking here
+        book_id = request.POST.get('book_id')
+        if book_id:
+            book = student.objects.get(id=book_id)
+            book.is_booked = True
+            book.save()
+            messages.success(request, f'Successfully booked "{book.title}"!')
+    
+    s = student.objects.all()
+    return render(request, 'books.html', {'s': s})
+
+def unbook_view(request):
+    if request.method == 'POST':
+        book_id = request.POST.get('book_id')
+        if book_id:
+            book = student.objects.get(id=book_id)
+            book.is_booked = False  # Set to False
+            book.save()
+            messages.success(request, f'Successfully unbooked "{book.title}"!')
+    return redirect('books')

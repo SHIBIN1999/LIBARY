@@ -24,5 +24,5 @@ urlpatterns = [
     path('home/',include('subapp.urls')),
     path('',include('signup.urls')),
     path('',include('clientapp.urls')),
-
+   
 ]

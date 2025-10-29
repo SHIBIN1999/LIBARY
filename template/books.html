@@ -191,12 +191,10 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">📚 Library</a>
+        <a class="navbar-brand fw-bold" href=" ">📚 Library</a>
 
         <div class="d-flex align-items-center ms-auto">
-            <a href="{% url 'list' %}" class="btn btn-outline-light btn-sm rounded-pill me-3">
-                ⚙️ Manage Books
-            </a>
+            
             {% if request.session.username %}
                 <span class="text-white me-3">
                     👋 Welcome, <strong>{{ request.session.username }}</strong>
@@ -224,8 +222,6 @@
                             <th>Title</th>
                             <th>Author</th>
                             <th>Year</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -234,37 +230,25 @@
                         <tr>
                             <td><strong>{{ k.title }}</strong></td>
                             <td>{{ k.author }}</td>
-                            <td>{{ k.year }}</td>
-                            <td>
-                                {% if k.starting_date %}
-                                    <span class="date-badge">{{ k.starting_date }}</span>
-                                {% else %}
-                                    <span class="text-muted">—</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if k.ending_date %}
-                                    <span class="date-badge">{{ k.ending_date }}</span>
-                                {% else %}
-                                    <span class="text-muted">—</span>
-                                {% endif %}
-                            </td>
+                            <td>{{ k.year }}</td>                            
                             <td>
                                 {% if k.is_booked %}
-                                    <form method="POST" action="{% url 'unbook' k.id %}" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-unbook btn-sm">
-                                            ✓ Unbook
-                                        </button>
-                                    </form>
+                                 <form method="POST" action="{% url 'unbook' %}" style="display: inline;">
+                                 {% csrf_token %}
+                                 <input type="hidden" name="book_id" value="{{ k.id }}">
+                                <button type="submit" class="btn btn-unbook btn-sm">
+                                  ✓ booked
+                                  </button>
+                                   </form>
                                 {% else %}
-                                    <form method="POST" action="{% url 'book' k.id %}" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-book btn-sm">
-                                            📅 Book Now
-                                        </button>
-                                    </form>
-                                {% endif %}
+                                 <form method="POST" action="{% url 'books' %}" style="display: inline;">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="book_id" value="{{ k.id }}">
+                                 <button type="submit" class="btn btn-book btn-sm">
+                                     📅 Book Now
+                                 </button>
+                                 </form>
+                               {% endif %}
                             </td>
                         </tr>
                         {% empty %}

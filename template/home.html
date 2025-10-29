@@ -165,7 +165,7 @@
         </a>
 
         <div class="d-flex align-items-center ms-auto">
-            {% if request.session.user_name %}
+            {% if request.user %}
              
                 <a href="{% url 'books' %}" class="btn btn-outline-light btn-sm rounded-pill me-2">
                     📋 My Books
@@ -205,8 +205,6 @@
                                     <th>📚 Book Title</th>
                                     <th>✍️ Author</th>
                                     <th>📅 Year</th>
-                                    <th>🕐 Start Time</th>
-                                    <th>📆 End Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -215,12 +213,6 @@
                                     <td class="fw-semibold">{{ book.title }}</td>
                                     <td>{{ book.author }}</td>
                                     <td>{{ book.year }}</td>
-                                    <td>
-                                        <span class="badge-time">🕐 10:00 AM</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge-date">📆 Nov 24, 2025</span>
-                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -233,11 +225,6 @@
                 <div class="icon">📚</div>
                 <h3>No Books Available</h3>
                 <p>The library is empty. Check back later!</p>
-                {% if request.session.user_name %}
-                    <a href="{% url 'create' %}" class="btn btn-light btn-lg rounded-pill mt-3">
-                        ➕ Add First Book
-                    </a>
-                {% endif %}
             </div>
         {% endif %}
     </div>
